@@ -64,8 +64,8 @@ Using lazy.nvim:
 | `<S-Tab>` | Previous file |
 | `]n` | Jump to next comment |
 | `[n` | Jump to previous comment |
-| `<C-e>` | Export to clipboard and show preview |
-| `C` | Clear all comments |
+| `C` | Export to clipboard and show preview |
+| `<C-r>` | Clear all comments |
 | `q` | Close and export comments to clipboard |
 
 **Edit mode** (when `readonly = false`):
@@ -94,7 +94,6 @@ require("review").setup({
     edit_comment = "<leader>ce",
     next_comment = "]n",
     prev_comment = "[n",
-    export = "<C-e>",
   },
   export = {
     context_lines = 3,

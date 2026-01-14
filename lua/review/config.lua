@@ -22,7 +22,6 @@ local M = {}
 ---@field edit_comment string
 ---@field next_comment string
 ---@field prev_comment string
----@field export string
 
 ---@class ReviewExportConfig
 ---@field context_lines number
@@ -48,7 +47,6 @@ M.defaults = {
     edit_comment = "<leader>ce",
     next_comment = "]n",
     prev_comment = "[n",
-    export = "<C-e>",
   },
   export = {
     context_lines = 3,
