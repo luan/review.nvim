@@ -111,6 +111,16 @@ function M.get_diffview_keymaps()
     { desc = "Toggle readonly/edit mode" },
   })
 
+  -- Toggle focus between file panel and content
+  table.insert(keymaps, {
+    "n", "f",
+    function()
+      local actions = require("diffview.actions")
+      actions.toggle_files()
+    end,
+    { desc = "Toggle focus (file panel/content)" },
+  })
+
   -- Tab/S-Tab to switch files and stay in diff view
   table.insert(keymaps, {
     "n", "<Tab>",

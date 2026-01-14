@@ -14,11 +14,11 @@ function M.setup()
     vim.api.nvim_set_hl(0, group, { link = link, default = true })
   end
 
-  -- Line highlights (subtle background)
-  vim.api.nvim_set_hl(0, "DiffnotesNoteLine", { bg = "#1a3a4a", default = true })
-  vim.api.nvim_set_hl(0, "DiffnotesSuggestionLine", { bg = "#2a3a2a", default = true })
-  vim.api.nvim_set_hl(0, "DiffnotesIssueLine", { bg = "#3a3a1a", default = true })
-  vim.api.nvim_set_hl(0, "DiffnotesPraiseLine", { bg = "#2a2a3a", default = true })
+  -- Line highlights (darker background, no underline)
+  vim.api.nvim_set_hl(0, "DiffnotesNoteLine", { bg = "#0d1f28", underline = false, default = true })
+  vim.api.nvim_set_hl(0, "DiffnotesSuggestionLine", { bg = "#152015", underline = false, default = true })
+  vim.api.nvim_set_hl(0, "DiffnotesIssueLine", { bg = "#28250d", underline = false, default = true })
+  vim.api.nvim_set_hl(0, "DiffnotesPraiseLine", { bg = "#15152a", underline = false, default = true })
 
   vim.fn.sign_define("DiffnotesComment", {
     text = "●",

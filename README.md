@@ -55,6 +55,7 @@ Using lazy.nvim:
 | `e` | Edit comment at cursor |
 | `c` | List all comments (quickfix) |
 | `t` | Cycle layout (horizontal/vertical/single) |
+| `f` | Toggle focus (file panel/content) |
 | `R` | Toggle readonly/edit mode |
 | `<Tab>` | Next file |
 | `<S-Tab>` | Previous file |

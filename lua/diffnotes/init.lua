@@ -32,6 +32,44 @@ function M.open()
   local dv_hooks = hooks.get_diffview_hooks()
   local dv_keymaps = keymaps.get_diffview_keymaps()
 
+  -- File panel keymaps: Enter selects and focuses content
+  local file_panel_keymaps = {
+    {
+      "n", "<cr>",
+      function()
+        local actions = require("diffview.actions")
+        actions.select_entry()
+        vim.defer_fn(function()
+          actions.focus_entry()
+        end, 10)
+      end,
+      { desc = "Select and focus file" },
+    },
+    {
+      "n", "<Tab>",
+      function()
+        local actions = require("diffview.actions")
+        actions.select_next_entry()
+        vim.defer_fn(function()
+          actions.focus_entry()
+        end, 10)
+      end,
+      { desc = "Next file" },
+    },
+    {
+      "n", "<S-Tab>",
+      function()
+        local actions = require("diffview.actions")
+        actions.select_prev_entry()
+        vim.defer_fn(function()
+          actions.focus_entry()
+        end, 10)
+      end,
+      { desc = "Previous file" },
+    },
+    { "n", "q", function() vim.cmd("DiffviewClose") end, { desc = "Close" } },
+  }
+
   diffview.setup({
     hooks = dv_hooks,
     keymaps = {
@@ -40,6 +78,7 @@ function M.open()
       diff2 = dv_keymaps,
       diff3 = dv_keymaps,
       diff4 = dv_keymaps,
+      file_panel = file_panel_keymaps,
     },
     view = {
       default = {
