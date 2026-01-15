@@ -103,13 +103,6 @@ local function toggle_selection()
   end
 end
 
-local function select_all()
-  for _, commit in ipairs(commits) do
-    selected[commit.hash] = true
-  end
-  render_lines()
-end
-
 local function select_none()
   selected = {}
   render_lines()
@@ -184,13 +177,13 @@ function M.open(callback)
       text = {
         top = " Select commits to review ",
         top_align = "center",
-        bottom = " <Space> select | <CR> confirm | q quit | a all | n none ",
+        bottom = " <Space> select | <CR> confirm | q quit | n clear ",
         bottom_align = "center",
       },
     },
     buf_options = {
       modifiable = false,
-      readonly = true,
+      buftype = "nofile",
     },
     win_options = {
       cursorline = true,
@@ -200,18 +193,13 @@ function M.open(callback)
   popup:mount()
   render_lines()
 
-  local buf = popup.bufnr
-  local opts = { buffer = buf, noremap = true, silent = true, nowait = true }
-
-  -- Keymaps
-  vim.keymap.set("n", "<Space>", toggle_selection, opts)
-  vim.keymap.set("n", "<CR>", function()
-    confirm_selection(callback)
-  end, opts)
-  vim.keymap.set("n", "q", close_picker, opts)
-  vim.keymap.set("n", "<Esc>", close_picker, opts)
-  vim.keymap.set("n", "a", select_all, opts)
-  vim.keymap.set("n", "n", select_none, opts)
+  -- Keymaps using nui's map method
+  local map_opts = { noremap = true, nowait = true }
+  popup:map("n", "<Space>", toggle_selection, map_opts)
+  popup:map("n", "<CR>", function() confirm_selection(callback) end, map_opts)
+  popup:map("n", "q", close_picker, map_opts)
+  popup:map("n", "<Esc>", close_picker, map_opts)
+  popup:map("n", "n", select_none, map_opts)
 end
 
 return M
