@@ -24,6 +24,13 @@ function M.setup()
     text = "●",
     texthl = "ReviewSign",
   })
+
+  -- GitHub thread highlights
+  vim.api.nvim_set_hl(0, "ReviewGitHubThread", { fg = "#7c3aed", bold = true, default = true })
+  vim.api.nvim_set_hl(0, "ReviewGitHubResolved", { fg = "#6b7280", default = true })
+  vim.api.nvim_set_hl(0, "ReviewGitHubOutdated", { bg = "#1f1f1f", italic = true, default = true })
+  vim.api.nvim_set_hl(0, "ReviewGitHubVirtText", { fg = "#6b7280", italic = true, default = true })
+  vim.api.nvim_set_hl(0, "ReviewGitHubAuthor", { fg = "#60a5fa", bold = true, default = true })
 end
 
 return M

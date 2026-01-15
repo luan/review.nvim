@@ -14,6 +14,7 @@ Inspired by [tuicr](https://github.com/agavra/tuicr).
 - Export format optimized for AI conversations
 - Send comments directly to [sidekick.nvim](https://github.com/folke/sidekick.nvim) for AI chat
 - Commit picker modal to select specific commits to review
+- **GitHub PR review support**: checkout PRs, view existing comments, submit reviews
 - Built on top of codediff.nvim
 
 ## Requirements
@@ -21,6 +22,7 @@ Inspired by [tuicr](https://github.com/agavra/tuicr).
 - Neovim >= 0.9
 - [codediff.nvim](https://github.com/esmuellert/codediff.nvim)
 - [nui.nvim](https://github.com/MunifTanjim/nui.nvim)
+- [GitHub CLI](https://cli.github.com/) (optional, for PR reviews)
 
 ## Installation
 
@@ -48,6 +50,9 @@ Using lazy.nvim:
 :Review              " Open codediff with comment keymaps (default)
 :Review open         " Same as above
 :Review commits      " Select commits to review (picker modal)
+:Review PR           " Review a GitHub PR (opens picker)
+:Review PR 123       " Review specific PR by number
+:Review submit       " Submit review to GitHub
 :Review close        " Close and export comments to clipboard
 :Review export       " Export comments to clipboard
 :Review preview      " Preview exported markdown in split
@@ -76,6 +81,16 @@ Using lazy.nvim:
 | `S` | Send comments to sidekick.nvim |
 | `<C-r>` | Clear all comments |
 | `q` | Close and export comments to clipboard |
+
+**GitHub PR keymaps** (when reviewing a PR):
+| Key | Action |
+|-----|--------|
+| `gC` | Show GitHub thread at cursor |
+| `gn` | Start new GitHub thread at cursor |
+| `gS` | Start GitHub suggestion (one-click apply) |
+| `]t` | Jump to next GitHub thread |
+| `[t` | Jump to previous GitHub thread |
+| `gs` | Submit review to GitHub |
 
 **Edit mode** (when `readonly = false`):
 | Key | Action |
@@ -135,6 +150,46 @@ Comment types: ISSUE (problems to fix), SUGGESTION (improvements), NOTE (observa
 2. **[SUGGESTION]** `src/utils/api.ts:45` - Consider using useMemo here
 3. **[PRAISE]** `src/hooks/useAuth.ts:12` - Clean implementation of the auth flow
 ```
+
+## GitHub PR Review
+
+review.nvim can review GitHub PRs directly. It uses the `gh` CLI to checkout PRs, fetch existing review threads, and submit reviews.
+
+### Setup
+
+1. Install [GitHub CLI](https://cli.github.com/)
+2. Authenticate: `gh auth login`
+
+### Workflow
+
+```vim
+:Review PR           " Pick from open PRs
+:Review PR 123       " Open specific PR
+```
+
+This will:
+1. Checkout the PR branch
+2. Open codediff with the correct diff (merge-base to head)
+3. Fetch and display existing GitHub review threads
+4. Let you add your own annotations
+
+### Viewing GitHub Threads
+
+Existing PR comments show as purple `◆` signs (or gray `✓` if resolved). Press `gC` to view the full thread with all replies and reactions.
+
+### Submitting Reviews
+
+After adding your annotations, press `gs` or run `:Review submit`:
+
+1. Preview your comments
+2. Choose review type: Approve (`a`), Comment (`c`), or Request Changes (`r`)
+3. Add an optional summary
+4. Comments are submitted as a PR review
+
+Your local comment types map to GitHub:
+- **Issue** → suggests "Request Changes"
+- **Suggestion/Note** → suggests "Comment"
+- **Praise** → suggests "Approve"
 
 ## Running Tests
 
