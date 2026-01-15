@@ -7,6 +7,7 @@ Inspired by [tuicr](https://github.com/agavra/tuicr).
 ## Features
 
 - Add comments to specific lines in diff view (Note, Suggestion, Issue, Praise)
+- Multi-line comment support with box-style virtual text display
 - Comments displayed as signs, line highlights, and virtual text
 - Comments persist per branch (stored in `~/.local/share/nvim/review/`)
 - Auto-export comments to clipboard when closing
@@ -82,6 +83,14 @@ Using lazy.nvim:
 | `<leader>cn/cs/ci/cp` | Add Note/Suggestion/Issue/Praise |
 | `<leader>cd` | Delete comment |
 | `<leader>ce` | Edit comment |
+
+**Comment popup** (when adding/editing):
+| Key | Action |
+|-----|--------|
+| `Enter` | Insert newline (multi-line comments supported) |
+| `Ctrl+s` | Submit comment |
+| `Tab` | Cycle comment type |
+| `Esc` / `q` | Cancel (normal mode) |
 
 ## Configuration
 

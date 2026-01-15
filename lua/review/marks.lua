@@ -5,6 +5,20 @@ local config = require("review.config")
 
 local ns_id = vim.api.nvim_create_namespace("review")
 
+---Normalize a file path to match how comments are stored
+---@param path string
+---@return string
+local function normalize_path(path)
+  if not path then
+    return path
+  end
+  -- Remove leading ./ if present
+  path = path:gsub("^%./", "")
+  -- Remove trailing slashes
+  path = path:gsub("/+$", "")
+  return path
+end
+
 ---@param bufnr number
 function M.render_for_buffer(bufnr)
   if not bufnr or not vim.api.nvim_buf_is_valid(bufnr) then
@@ -23,10 +37,10 @@ function M.render_for_buffer(bufnr)
     -- Format: codediff://repo/path/to/file.lua?rev=xxx
     local path = bufname:match("^codediff://[^/]+/(.+)%?") or bufname:match("^codediff://[^/]+/(.+)$")
     if path then
-      file = path
+      file = normalize_path(path)
     end
   else
-    file = vim.fn.fnamemodify(bufname, ":.")
+    file = normalize_path(vim.fn.fnamemodify(bufname, ":."))
   end
 
   if not file then
@@ -48,19 +62,33 @@ function M.render_for_buffer(bufnr)
 
     local line = comment.line - 1
     if line >= 0 then
-      -- Build virtual lines for the comment (no emoji since gutter has it)
       local virt_lines = {}
-      local header = string.format(" %s: ", name)
-
-      -- Split comment text into lines if it's multiline
       local text_lines = vim.split(comment.text, "\n")
-      for i, text_line in ipairs(text_lines) do
-        if i == 1 then
-          table.insert(virt_lines, { { header .. text_line, hl } })
-        else
-          table.insert(virt_lines, { { string.rep(" ", #header) .. text_line, hl } })
-        end
+
+      -- Calculate max text width for box sizing (using display width)
+      local max_text_width = 0
+      for _, text_line in ipairs(text_lines) do
+        max_text_width = math.max(max_text_width, vim.fn.strdisplaywidth(text_line))
       end
+      local header_text = string.format("[%s]", string.upper(name))
+      local content_width = math.max(max_text_width, 20)
+
+      -- Top border: ╭─[NOTE]───────────────────────╮
+      local top_dashes = content_width - vim.fn.strdisplaywidth(header_text) + 1
+      local top_line = "╭─" .. header_text .. string.rep("─", top_dashes) .. "╮"
+      table.insert(virt_lines, { { top_line, hl } })
+
+      -- Content lines: │ text                        │
+      for _, text_line in ipairs(text_lines) do
+        local text_width = vim.fn.strdisplaywidth(text_line)
+        local padding = content_width - text_width
+        local content = "│ " .. text_line .. string.rep(" ", padding) .. " │"
+        table.insert(virt_lines, { { content, hl } })
+      end
+
+      -- Bottom border: ╰─────────────────────────────╯
+      local bottom = "╰" .. string.rep("─", content_width + 2) .. "╯"
+      table.insert(virt_lines, { { bottom, hl } })
 
       pcall(vim.api.nvim_buf_set_extmark, bufnr, ns_id, line, 0, {
         sign_text = icon,

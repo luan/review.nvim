@@ -6,6 +6,23 @@ local config = require("review.config")
 ---@type number|nil Current tabpage with active codediff session
 local current_tabpage = nil
 
+---@type number|nil Autocmd group for buffer events
+local buf_augroup = nil
+
+---Normalize a file path for consistent storage/lookup
+---@param path string
+---@return string
+local function normalize_path(path)
+  if not path then
+    return path
+  end
+  -- Remove leading ./ if present
+  path = path:gsub("^%./", "")
+  -- Remove trailing slashes
+  path = path:gsub("/+$", "")
+  return path
+end
+
 ---@return number|nil tabpage id
 function M.get_current_tabpage()
   return current_tabpage
@@ -80,10 +97,10 @@ function M.get_cursor_position()
   if git_ctx and git_ctx.git_root then
     local abs_path = vim.fn.fnamemodify(file_path, ":p")
     local rel_path = abs_path:gsub("^" .. vim.pesc(git_ctx.git_root) .. "/", "")
-    return rel_path, cursor[1]
+    return normalize_path(rel_path), cursor[1]
   end
 
-  return vim.fn.fnamemodify(file_path, ":."), cursor[1]
+  return normalize_path(vim.fn.fnamemodify(file_path, ":.")), cursor[1]
 end
 
 ---@return number|nil original buffer
@@ -120,7 +137,26 @@ function M.on_session_created(tabpage)
     end
   end
 
-  -- Render comments for both buffers
+  -- Clear old autocmds
+  if buf_augroup then
+    pcall(vim.api.nvim_del_augroup_by_id, buf_augroup)
+  end
+  buf_augroup = vim.api.nvim_create_augroup("review_buf_marks", { clear = true })
+
+  -- Set up BufEnter autocmd to render marks when entering codediff buffers
+  -- This ensures marks are rendered even if buffers weren't ready initially
+  vim.api.nvim_create_autocmd("BufEnter", {
+    group = buf_augroup,
+    callback = function()
+      if vim.api.nvim_get_current_tabpage() ~= current_tabpage then
+        return
+      end
+      local bufnr = vim.api.nvim_get_current_buf()
+      marks.render_for_buffer(bufnr)
+    end,
+  })
+
+  -- Initial render with delay for buffers to be ready
   vim.defer_fn(function()
     marks.render_for_buffer(orig_buf)
     marks.render_for_buffer(mod_buf)
@@ -130,6 +166,11 @@ end
 -- Called when codediff session is closed
 function M.on_session_closed()
   current_tabpage = nil
+  -- Clean up autocmds
+  if buf_augroup then
+    pcall(vim.api.nvim_del_augroup_by_id, buf_augroup)
+    buf_augroup = nil
+  end
   require("review.keymaps").cleanup()
 end
 
