@@ -26,7 +26,10 @@ function M.add_at_cursor(initial_type)
   popup.open(initial_type or "note", nil, function(comment_type, text)
     if comment_type and text then
       store.add(file, line, comment_type, text)
-      marks.refresh()
+      -- Schedule refresh to run after popup is fully closed
+      vim.schedule(function()
+        marks.refresh()
+      end)
       notify(string.format("Added %s comment", comment_type), vim.log.levels.INFO)
     end
   end)
@@ -53,7 +56,10 @@ function M.edit_at_cursor()
   popup.open(comment.type, comment.text, function(new_type, text)
     if new_type and text then
       store.update(comment.id, text, new_type)
-      marks.refresh()
+      -- Schedule refresh to run after popup is fully closed
+      vim.schedule(function()
+        marks.refresh()
+      end)
       notify("Comment updated", vim.log.levels.INFO)
     end
   end)
@@ -77,7 +83,10 @@ function M.delete_at_cursor()
   }, function(choice)
     if choice == "Yes" then
       store.delete(comment.id)
-      marks.refresh()
+      -- Schedule refresh to run after UI is closed
+      vim.schedule(function()
+        marks.refresh()
+      end)
       notify("Comment deleted", vim.log.levels.INFO)
     end
   end)
