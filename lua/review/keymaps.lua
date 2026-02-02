@@ -100,6 +100,15 @@ local function set_buffer_keymaps(bufnr)
   -- Navigation and close - available in both modes (or edit mode only for nav)
   set(km.next_file, navigate("next"), "Next file")
   set(km.prev_file, navigate("prev"), "Previous file")
+  set(km.toggle_file_panel, function()
+    local ok, lifecycle = pcall(require, "codediff.ui.lifecycle")
+    if not ok then return end
+    local tabpage = vim.api.nvim_get_current_tabpage()
+    local explorer_obj = lifecycle.get_explorer(tabpage)
+    if explorer_obj then
+      require("codediff.ui.explorer").toggle_visibility(explorer_obj)
+    end
+  end, "Toggle file panel")
   set(km.close, function() require("review").close() end, "Close")
   set(km.toggle_readonly, function() require("review").toggle_readonly() end, "Toggle readonly mode")
 

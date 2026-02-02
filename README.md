@@ -111,6 +111,7 @@ require("review").setup({
     edit_comment = "<leader>ce",
     next_comment = "]n",
     prev_comment = "[n",
+    toggle_file_panel = "f",
   },
   export = {
     context_lines = 3,

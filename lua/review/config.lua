@@ -30,6 +30,7 @@ local M = {}
 ---@field toggle_readonly string|false
 ---@field next_file string|false
 ---@field prev_file string|false
+---@field toggle_file_panel string|false
 ---@field readonly_add string|false
 ---@field readonly_delete string|false
 ---@field readonly_edit string|false
@@ -62,6 +63,7 @@ M.defaults = {
     prev_comment = "[n",
     next_file = "<Tab>",
     prev_file = "<S-Tab>",
+    toggle_file_panel = "f",
     -- Common actions
     list_comments = "c",
     export_clipboard = "C",
