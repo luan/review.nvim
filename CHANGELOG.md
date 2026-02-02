@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.6.0](https://github.com/georgeguimaraes/review.nvim/compare/v1.5.0...v1.6.0) (2026-02-02)
+
+
+### Features
+
+* add configurable file panel toggle keymap ([6cd2567](https://github.com/georgeguimaraes/review.nvim/commit/6cd2567ca5ac07b67366075b33dc83699690b772))
+
+
+### Documentation
+
+* document keymap options ([3602c4e](https://github.com/georgeguimaraes/review.nvim/commit/3602c4ecb9abcd661c7e94815cd335f18beb527c))
+
 ## [1.5.0](https://github.com/georgeguimaraes/review.nvim/compare/v1.4.0...v1.5.0) (2026-01-29)
 
 
